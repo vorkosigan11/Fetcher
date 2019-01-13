@@ -1,0 +1,80 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fetcher"
+        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf" x:Class="Fetcher.MainWindow"
+        xmlns:Notification="clr-namespace:Syncfusion.Windows.Controls.Notification;assembly=Syncfusion.SfBusyIndicator.WPF"
+        mc:Ignorable="d"
+        Title="Fetcher" Height="500" Width="700" MinHeight="500" MinWidth="700" Icon="icon.ico">
+
+    <Window.DataContext>
+        <local:MyViewModel x:Name="MyViewModel" />
+    </Window.DataContext>
+    <Window.Resources>
+        <local:ColorConverter x:Key="converter" />
+        <Style TargetType="Syncfusion:GridCell">
+            <Setter Property="Background" Value="{Binding Converter={StaticResource converter}}" />
+        </Style>
+
+        <Style x:Key="StyleButtonAdv" TargetType="Syncfusion:ButtonAdv">
+            <Style.Triggers>
+                <Trigger Property="Syncfusion:ButtonAdv.IsFocused" Value="True">
+                    <Setter Property="Syncfusion:ButtonAdv.Background" Value="Green"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DockPanel  HorizontalAlignment="Center" Grid.Row="0">
+            <TextBox x:Name="numerZlecenia"  MinWidth="50" FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center" TextChanged="TextBox_TextChanged" />
+            <TextBox IsTabStop="False"  IsReadOnly="True" Foreground="Gray"  FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center" Text="/SW/" />
+            <TextBox x:Name="rokZlecenia"  FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center" />
+            <TextBox IsReadOnly="True"  IsTabStop="False" Foreground="Gray" FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center" Text="/ZLP" />
+        </DockPanel>
+
+        <!--<TextBox Name="numerZlecenia" FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center">
+        </TextBox>-->
+
+        <Syncfusion:ButtonAdv Grid.Row="1" Click="Button_Click" x:Name="RunButton" IconStretch="None" IsMultiLine="False" ForceCursor="True" SmallIcon="{x:Null}" FontSize="24" FontWeight="Bold" Label="Pobierz dane" Template="{StaticResource ButtonAdvControlTemplate1}">
+        </Syncfusion:ButtonAdv>
+        <Notification:SfBusyIndicator Grid.Row="2"  x:Name="BusyIndicator" />
+        <Syncfusion:SfDataGrid x:Name="dataGrid" Grid.Row="2"  ItemsSource="{Binding Results}" AutoGenerateColumns="False" ShowRowHeader="True" AllowEditing="False" CanUseViewFilter="True" AllowSorting="True">
+
+            <Syncfusion:SfDataGrid.Columns>
+                <Syncfusion:GridTextColumn x:Name="NumerPozycji" MappingName="NumerPozycji" HeaderText="Lp." ColumnSizer="Auto" />
+                <Syncfusion:GridTextColumn MappingName="Path"  HeaderText="Sciezka" ColumnSizer="Star" />
+                <Syncfusion:GridTextColumn MappingName="Exist" HeaderText="Plik istnieje"  ColumnSizer="Auto" />
+            </Syncfusion:SfDataGrid.Columns>
+        </Syncfusion:SfDataGrid>
+
+        <!--</ScrollViewer>-->
+        <!--<ScrollViewer>-->
+        <!--<DataGrid   Height="444" Grid.Row="2"  x:Name="dataGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" IsEnabled="False" ItemsSource="{Binding Results}" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True">
+
+            <DataGrid.RowStyle>
+                <Style TargetType="{x:Type DataGridRow}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Exist}" Value="True">
+                            <Setter Property="Background" Value="LightGreen" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Exist}" Value="False">
+                            <Setter Property="Background" Value="#FFFF2929" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Path}" Header="Sciezka" Width="*" />
+                <DataGridTextColumn Binding="{Binding Exist}" Header="Czy istnieje plik" Width="100" />
+            </DataGrid.Columns>
+        </DataGrid>-->
+    </Grid>
+</Window>

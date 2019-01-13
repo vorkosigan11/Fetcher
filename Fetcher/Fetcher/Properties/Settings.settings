@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Fetcher.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="connectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Server=127.0.0.1;Port=5432;Database=montanstal;User Id=postgres;Password=azbest;</Value>
+    </Setting>
+    <Setting Name="pathToParts" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Q:\parts\</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
