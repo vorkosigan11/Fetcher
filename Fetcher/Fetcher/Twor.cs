@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Fetcher
 {
-    public class Twor
+    public class Twor :INotifyPropertyChanged
     {
         public string Kod { get; set; }
 
@@ -23,7 +25,17 @@ namespace Fetcher
 
         public string Path { get; }
 
-        public Boolean Exist { get; set; }
+        private Boolean _exist;
+
+        public Boolean Exist
+        {
+            get { return this._exist; }
+            set {
+                this._exist = value;
+               // OnPropertyChanged();
+            }
+        }
+
 
         public int NumerPozycji { get; set; }
 
@@ -42,6 +54,17 @@ namespace Fetcher
                         System.IO.Path.DirectorySeparatorChar +
                         ((Rewizja.Length > 0) ? numerRysunku + "_zm" + Rewizja : NumerRysunku) + ".prs";
             // Checkfile(this.Path);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName]string name = "")
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         internal void Checkfile(string path)

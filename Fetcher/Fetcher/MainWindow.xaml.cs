@@ -25,12 +25,15 @@ namespace Fetcher
     /// </summary>
     public partial class MainWindow : Window
     {
+  
+        
         public MainWindow()
         {
             InitializeComponent();
             RunButton.IsEnabled = false;
             BusyIndicator.IsBusy = false;
         }
+
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -57,24 +60,34 @@ namespace Fetcher
         {
             if (this.DataContext is MyViewModel)
             {
-                dataGrid.Dispatcher.Invoke(() => dataGrid.Visibility = Visibility.Hidden);
-                BusyIndicator.Dispatcher.Invoke(() => BusyIndicator.IsBusy = true);
+                dataGrid.Visibility = Visibility.Hidden;
+                BusyIndicator.IsBusy = true;
 
-                //await Task.Run(() => (this.DataContext as MyViewModel).AddDataToResults(numerZlecenia.Text, rokZlecenia.Text, Fetcher.Properties.Settings.Default.connectionString));
+                MyViewModel.AddDataToResults(numerZlecenia.Text, rokZlecenia.Text, Fetcher.Properties.Settings.Default.connectionString);
 
                 await Task.Run(() => MyViewModel.AddDataToResults(
-                                                            numerZlecenia.Dispatcher.Invoke(() => numerZlecenia.Text),
-                                                            rokZlecenia.Dispatcher.Invoke(() => rokZlecenia.Text),
-                                                            Fetcher.Properties.Settings.Default.connectionString));
+                numerZlecenia.Dispatcher.Invoke(() => numerZlecenia.Text),
+                                                             rokZlecenia.Dispatcher.Invoke(() => rokZlecenia.Text),
+                                                             Fetcher.Properties.Settings.Default.connectionString));
 
+
+            
                 this.dataGrid.SortColumnDescriptions.Clear();
                 SortColumnDescription sortColumnDescription = new SortColumnDescription();
                 sortColumnDescription.ColumnName = "Exist";
                 sortColumnDescription.SortDirection = ListSortDirection.Ascending;
                 this.dataGrid.SortColumnDescriptions.Add(sortColumnDescription);
 
+                //dodanie warunku aby sprawdzal czy jest aaaaaaa
+
+                //MyViewModel.RunSigma();
+                await Task.Run(() => MyViewModel.RunSigma());
+
+                dataGrid.ItemsSource = MyViewModel.Results;
+
                 BusyIndicator.IsBusy = false;
                 dataGrid.Visibility = Visibility.Visible;
+
             }
         }
     }

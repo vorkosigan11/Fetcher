@@ -11,14 +11,18 @@ using System.Windows;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Fetcher
 {
+
     public class MyViewModel
     {
         public ObservableCollection<Twor> Results { get; set; }
 
         private string connString = "";
+
+        private string numerZlecenia = "";
 
         public MyViewModel()
         {
@@ -28,13 +32,15 @@ namespace Fetcher
 
         public void AddDataToResults(string woNumber, string rok, string connectionString)
         {
+            numerZlecenia = woNumber + "/SW/" + rok + "/ZLP";
+
             connString = connectionString;
             Results.Clear();
             Results = GetDataFromVendoDatabase(woNumber as string, rok as string);
             Parallel.For(0, Results.Count, index =>
-            {
-                (Results.ElementAt(index) as Twor).Checkfile((Results.ElementAt(index) as Twor).Path);
-            });
+              {
+                  (Results.ElementAt(index) as Twor).Checkfile((Results.ElementAt(index) as Twor).Path);
+              });
         }
 
         private ObservableCollection<Twor> GetDataFromVendoDatabase(string woNumber, string rok)
@@ -113,6 +119,86 @@ namespace Fetcher
             {
                 MessageBox.Show(String.Format("TransactionAbortedException Message: {0}", ex.Message), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return new ObservableCollection<Twor>();
+            }
+        }
+
+        public void RunSigma()
+        {
+            Type comObjectType = Type.GetTypeFromProgID("SigmaNEST.SNAutomation", true);
+            Object comObject = Activator.CreateInstance(comObjectType);
+
+            makeWol(makePathToWol());
+            Object[] parameters = new Object[2];
+            parameters[0] = makePathToWol();
+            parameters[1] = true;
+
+           comObject.GetType().InvokeMember("RunWOLFile", BindingFlags.InvokeMethod, null, comObject, parameters);
+        }
+
+        private string makePathToWol()
+        {
+            return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + numerZlecenia.Replace("/", "_") + ".wol";
+        }
+
+        private void makeWol(string path)
+        {
+            const string loadPart = "LOAD,PART,";
+            const string setWO = "SET,WONO,";
+            const string wo = "WO,";
+            const string savePart = "SAVE,PART,ONSET,WONO,";
+            // trzeba zmienic zapytanie aby pobrac date zamowienia
+            const string setDate = "SET,DATE,2019/01/18";
+
+
+
+            try
+            {
+                string wolContent = "";
+
+                wolContent += wo + numerZlecenia + "," + Results[1].Firma + Environment.NewLine;
+                wolContent += setDate + Environment.NewLine;
+                wolContent += savePart + numerZlecenia + Environment.NewLine;
+
+                foreach (Twor item in Results)
+                {
+                    wolContent += loadPart + item.Path.ToString() + "," + item.Ilosc.ToString() + Environment.NewLine;
+                    wolContent += setWO + numerZlecenia + Environment.NewLine;
+                }
+
+
+                // Delete the file if it exists.
+                if (File.Exists(path))
+                {
+                    // Note that no lock is put on the
+                    // file and the possibility exists
+                    // that another process could do
+                    // something with it between
+                    // the calls to Exists and Delete.
+                    File.Delete(path);
+                }
+
+                // Create the file.
+                using (FileStream fs = File.Create(path))
+                {
+                    Byte[] info = new UTF8Encoding(true).GetBytes(wolContent);
+                    // Add some information to the file.
+                    fs.Write(info, 0, info.Length);
+                }
+
+                // Open the stream and read it back.
+                //using (StreamReader sr = File.OpenText(path))
+                //{
+                //    string s = "";
+                //    while ((s = sr.ReadLine()) != null)
+                //    {
+                //        Console.WriteLine(s);
+                //    }
+                //}
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
     }

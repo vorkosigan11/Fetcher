@@ -12,20 +12,16 @@
     <Window.DataContext>
         <local:MyViewModel x:Name="MyViewModel" />
     </Window.DataContext>
+    
     <Window.Resources>
-        <local:ColorConverter x:Key="converter" />
-        <Style TargetType="Syncfusion:GridCell">
+        <local:ColorConverter x:Key="converter"/>
+        <Style TargetType="Syncfusion:VirtualizingCellsControl">
             <Setter Property="Background" Value="{Binding Converter={StaticResource converter}}" />
         </Style>
-
-        <Style x:Key="StyleButtonAdv" TargetType="Syncfusion:ButtonAdv">
-            <Style.Triggers>
-                <Trigger Property="Syncfusion:ButtonAdv.IsFocused" Value="True">
-                    <Setter Property="Syncfusion:ButtonAdv.Background" Value="Green"></Setter>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
+    
+    
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -45,7 +41,9 @@
 
         <Syncfusion:ButtonAdv Grid.Row="1" Click="Button_Click" x:Name="RunButton" IconStretch="None" IsMultiLine="False" ForceCursor="True" SmallIcon="{x:Null}" FontSize="24" FontWeight="Bold" Label="Pobierz dane" Template="{StaticResource ButtonAdvControlTemplate1}">
         </Syncfusion:ButtonAdv>
-        <Notification:SfBusyIndicator Grid.Row="2"  x:Name="BusyIndicator" />
+        <Notification:SfBusyIndicator Grid.Row="2" x:Name="BusyIndicator" />
+        
+        
         <Syncfusion:SfDataGrid x:Name="dataGrid" Grid.Row="2"  ItemsSource="{Binding Results}" AutoGenerateColumns="False" ShowRowHeader="True" AllowEditing="False" CanUseViewFilter="True" AllowSorting="True">
 
             <Syncfusion:SfDataGrid.Columns>
@@ -55,26 +53,6 @@
             </Syncfusion:SfDataGrid.Columns>
         </Syncfusion:SfDataGrid>
 
-        <!--</ScrollViewer>-->
-        <!--<ScrollViewer>-->
-        <!--<DataGrid   Height="444" Grid.Row="2"  x:Name="dataGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" IsEnabled="False" ItemsSource="{Binding Results}" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True">
-
-            <DataGrid.RowStyle>
-                <Style TargetType="{x:Type DataGridRow}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Exist}" Value="True">
-                            <Setter Property="Background" Value="LightGreen" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding Exist}" Value="False">
-                            <Setter Property="Background" Value="#FFFF2929" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path}" Header="Sciezka" Width="*" />
-                <DataGridTextColumn Binding="{Binding Exist}" Header="Czy istnieje plik" Width="100" />
-            </DataGrid.Columns>
-        </DataGrid>-->
+      
     </Grid>
 </Window>

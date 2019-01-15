@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-
+using Syncfusion;
 namespace Fetcher
 {
     /// <summary>
@@ -13,5 +13,10 @@ namespace Fetcher
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            //Register Syncfusion license
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTk5MzNAMzEzNjJlMzQyZTMwU0JRcXdRVThnbm5KT0MzaTRVaUVmMEVvTmxvYk1YQmwyNDJVdkp3SkZLYz0=");
+        }
     }
 }
