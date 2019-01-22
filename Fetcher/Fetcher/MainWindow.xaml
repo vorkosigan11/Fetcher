@@ -12,16 +12,14 @@
     <Window.DataContext>
         <local:MyViewModel x:Name="MyViewModel" />
     </Window.DataContext>
-    
+
     <Window.Resources>
-        <local:ColorConverter x:Key="converter"/>
+        <local:ColorConverter x:Key="converter" />
         <Style TargetType="Syncfusion:VirtualizingCellsControl">
             <Setter Property="Background" Value="{Binding Converter={StaticResource converter}}" />
         </Style>
     </Window.Resources>
-    
-    
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -39,20 +37,19 @@
         <!--<TextBox Name="numerZlecenia" FontSize="33" Padding="5" FontFamily="Verdana" CharacterCasing="Upper" HorizontalAlignment="Center">
         </TextBox>-->
 
-        <Syncfusion:ButtonAdv Grid.Row="1" Click="Button_Click" x:Name="RunButton" IconStretch="None" IsMultiLine="False" ForceCursor="True" SmallIcon="{x:Null}" FontSize="24" FontWeight="Bold" Label="Pobierz dane" Template="{StaticResource ButtonAdvControlTemplate1}">
+        <Syncfusion:ButtonAdv Grid.Row="1" Click="Button_Click" x:Name="RunButton" IconStretch="None" IsMultiLine="False" ForceCursor="True" SmallIcon="{x:Null}" FontSize="24" FontWeight="Bold" Label="Załaduj do Sigmy" Template="{StaticResource ButtonAdvControlTemplate1}">
         </Syncfusion:ButtonAdv>
-        <Notification:SfBusyIndicator Grid.Row="2" x:Name="BusyIndicator" />
-        
-        
-        <Syncfusion:SfDataGrid x:Name="dataGrid" Grid.Row="2"  ItemsSource="{Binding Results}" AutoGenerateColumns="False" ShowRowHeader="True" AllowEditing="False" CanUseViewFilter="True" AllowSorting="True">
+        <Notification:SfBusyIndicator Panel.ZIndex="99" Grid.Row="2"  x:Name="BusyIndicator" AnimationType="SlicedCircle" />
+
+        <Syncfusion:SfDataGrid x:Name="dataGrid"  Grid.Row="2"  AutoGenerateColumns="False" ShowRowHeader="True" AllowEditing="False" CanUseViewFilter="True" AllowSorting="True" Panel.ZIndex="50">
 
             <Syncfusion:SfDataGrid.Columns>
                 <Syncfusion:GridTextColumn x:Name="NumerPozycji" MappingName="NumerPozycji" HeaderText="Lp." ColumnSizer="Auto" />
                 <Syncfusion:GridTextColumn MappingName="Path"  HeaderText="Sciezka" ColumnSizer="Star" />
-                <Syncfusion:GridTextColumn MappingName="Exist" HeaderText="Plik istnieje"  ColumnSizer="Auto" />
+                <Syncfusion:GridCheckBoxColumn MappingName="Exist" HeaderText="Plik istnieje"  ColumnSizer="Auto" />
             </Syncfusion:SfDataGrid.Columns>
         </Syncfusion:SfDataGrid>
 
-      
+        <TextBox x:Name="messageBox" Grid.Row="2" FontSize="50" Visibility="Hidden"></TextBox>
     </Grid>
 </Window>

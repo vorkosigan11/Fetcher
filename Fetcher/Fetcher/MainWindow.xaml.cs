@@ -25,15 +25,13 @@ namespace Fetcher
     /// </summary>
     public partial class MainWindow : Window
     {
-  
-        
         public MainWindow()
         {
             InitializeComponent();
             RunButton.IsEnabled = false;
             BusyIndicator.IsBusy = false;
+            dataGrid.ItemsSource = MyViewModel.Pieces;
         }
-
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -60,34 +58,77 @@ namespace Fetcher
         {
             if (this.DataContext is MyViewModel)
             {
+                MyViewModel.WorkOrder.WorkOrderNumber = numerZlecenia.Text + "/SW/" + rokZlecenia.Text + "/ZLP";
+
+                messageBox.Visibility = Visibility.Hidden;
                 dataGrid.Visibility = Visibility.Hidden;
                 BusyIndicator.IsBusy = true;
 
-                MyViewModel.AddDataToResults(numerZlecenia.Text, rokZlecenia.Text, Fetcher.Properties.Settings.Default.connectionString);
+                BusyIndicator.Header = "Sprawdzanie czy istnieje zlecenie w Sigmie...";
+                bool sigma = await Task.Run(() => MyViewModel.isWoInSigma(Properties.Settings.Default.sigmaConnectionString));
+                bool vendo = await Task.Run(() => MyViewModel.isWoInVendo(Properties.Settings.Default.vendoConnectionString));
+                if ((!sigma && vendo) == true)
+                {
+                    BusyIndicator.Header = "Pobieranie danych z bazy Vendo...";
+                    await Task.Run(() =>
+                         MyViewModel.AddDataToResults(Fetcher.Properties.Settings.Default.vendoConnectionString, Fetcher.Properties.Settings.Default.sigmaConnectionString));
 
-                await Task.Run(() => MyViewModel.AddDataToResults(
-                numerZlecenia.Dispatcher.Invoke(() => numerZlecenia.Text),
-                                                             rokZlecenia.Dispatcher.Invoke(() => rokZlecenia.Text),
-                                                             Fetcher.Properties.Settings.Default.connectionString));
+                    BusyIndicator.IsBusy = false;
+                    dataGrid.Visibility = Visibility.Visible;
 
+                    dataGrid.ItemsSource = null;
+                    dataGrid.ItemsSource = MyViewModel.Pieces;
 
-            
-                this.dataGrid.SortColumnDescriptions.Clear();
-                SortColumnDescription sortColumnDescription = new SortColumnDescription();
-                sortColumnDescription.ColumnName = "Exist";
-                sortColumnDescription.SortDirection = ListSortDirection.Ascending;
-                this.dataGrid.SortColumnDescriptions.Add(sortColumnDescription);
+                    this.dataGrid.SortColumnDescriptions.Clear();
+                    SortColumnDescription sortColumnDescription = new SortColumnDescription();
+                    sortColumnDescription.ColumnName = "Exist";
+                    sortColumnDescription.SortDirection = ListSortDirection.Ascending;
+                    this.dataGrid.SortColumnDescriptions.Add(sortColumnDescription);
 
-                //dodanie warunku aby sprawdzal czy jest aaaaaaa
+                    BusyIndicator.Header = "Sprawdzanie czy wszytkie pliki istnieją...";
+                    BusyIndicator.IsBusy = true;
+                    bool fileExist = await Task.Run(() => MyViewModel.AllFilesExist());
 
-                //MyViewModel.RunSigma();
-                await Task.Run(() => MyViewModel.RunSigma());
+                    if (fileExist)
+                    {
+                        BusyIndicator.IsBusy = false;
+                        BusyIndicator.Header = "Ładowanie WOL do Sigmy...";
+                        BusyIndicator.IsBusy = true;
 
-                dataGrid.ItemsSource = MyViewModel.Results;
+                        await Task.Run(() => Task.Delay(2000));
 
-                BusyIndicator.IsBusy = false;
-                dataGrid.Visibility = Visibility.Visible;
+                        await Task.Run(() =>
+                        {
+                            MyViewModel.RunSigma();
+                        });
 
+                        BusyIndicator.IsBusy = false;
+                        BusyIndicator.Header = "Aktualizacja zlecenia w Sigmie...";
+                        BusyIndicator.IsBusy = true;
+                        await Task.Run(() => Task.Delay(2000));
+                        if (MyViewModel.isWoInSigma(Fetcher.Properties.Settings.Default.sigmaConnectionString))
+                        {
+                            int i = MyViewModel.ChangeInSigma(Fetcher.Properties.Settings.Default.sigmaConnectionString, MyViewModel.makeQueryUpdateWoInSigma());
+                        }
+                        else
+                        {
+                            MessageBox.Show("Posypało się - brak zlecenia w Sigmie", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+
+                        BusyIndicator.IsBusy = false;
+                    }
+                }
+                else
+                {
+                    BusyIndicator.IsBusy = false;
+                    messageBox.Visibility = Visibility.Visible;
+
+                    if (sigma)
+                        messageBox.Text = ("Zlecenie " + MyViewModel.WorkOrder.WorkOrderNumber + " już istnieje w Sigmie");
+
+                    if (!vendo)
+                        messageBox.Text = ("Brak zlecenia " + MyViewModel.WorkOrder.WorkOrderNumber + " w Vendo");
+                }
             }
         }
     }

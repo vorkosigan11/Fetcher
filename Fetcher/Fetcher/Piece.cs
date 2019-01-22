@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Fetcher
 {
-    public class Twor :INotifyPropertyChanged
+    public class Piece : INotifyPropertyChanged
     {
         public string Kod { get; set; }
 
@@ -30,16 +30,16 @@ namespace Fetcher
         public Boolean Exist
         {
             get { return this._exist; }
-            set {
+            set
+            {
                 this._exist = value;
-               // OnPropertyChanged();
+                // OnPropertyChanged(); - sypie sie program
             }
         }
 
-
         public int NumerPozycji { get; set; }
 
-        public Twor(string kod, int ilosc, string nazwaZSigmy, string numerRysunku, string rewizja, string firma, string sciezkaDoPRS, int numerPozycji)
+        public Piece(string kod, int ilosc, string nazwaZSigmy, string numerRysunku, string rewizja, string firma, string sciezkaDoPRS, int numerPozycji)
         {
             this.Kod = kod;
             this.Ilosc = ilosc;

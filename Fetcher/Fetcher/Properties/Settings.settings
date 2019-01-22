@@ -2,11 +2,14 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Fetcher.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="connectionString" Type="System.String" Scope="User">
+    <Setting Name="vendoConnectionString" Type="System.String" Scope="User">
       <Value Profile="(Default)">Server=blake;Port=5432;Database=montanstal;User Id=madmin;Password=M0nt@nst@l;</Value>
     </Setting>
     <Setting Name="pathToParts" Type="System.String" Scope="User">
       <Value Profile="(Default)">Q:\parts\</Value>
+    </Setting>
+    <Setting Name="sigmaConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Data Source=ben;Initial Catalog=Sigma;Integrated Security=True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

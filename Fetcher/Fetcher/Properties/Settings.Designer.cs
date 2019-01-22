@@ -26,12 +26,12 @@ namespace Fetcher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Server=blake;Port=5432;Database=montanstal;User Id=madmin;Password=M0nt@nst@l;")]
-        public string connectionString {
+        public string vendoConnectionString {
             get {
-                return ((string)(this["connectionString"]));
+                return ((string)(this["vendoConnectionString"]));
             }
             set {
-                this["connectionString"] = value;
+                this["vendoConnectionString"] = value;
             }
         }
         
@@ -44,6 +44,18 @@ namespace Fetcher.Properties {
             }
             set {
                 this["pathToParts"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=ben;Initial Catalog=Sigma;Integrated Security=True")]
+        public string sigmaConnectionString {
+            get {
+                return ((string)(this["sigmaConnectionString"]));
+            }
+            set {
+                this["sigmaConnectionString"] = value;
             }
         }
     }

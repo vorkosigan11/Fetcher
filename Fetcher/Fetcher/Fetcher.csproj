@@ -108,7 +108,8 @@
     </ApplicationDefinition>
     <Compile Include="ColorConverter.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Twor.cs" />
+    <Compile Include="Piece.cs" />
+    <Compile Include="WorkOrder.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

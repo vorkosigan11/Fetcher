@@ -15,7 +15,7 @@ namespace Fetcher
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var data = value as Twor;
+            var data = value as Piece;
 
             //custom condition is checked based on data.
 
