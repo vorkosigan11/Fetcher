@@ -122,17 +122,15 @@ namespace Fetcher
                         cn.ConnectionString = connectionString;
 
                         cmd.CommandText = @"SELECT
-                                                TR.tr_longopis,
+												TR.tr_longopis,
                                                 TR.tr_nrobcy,
-                                                TR.tr_datasprzedaz,
+                                                Z.zl_datazakonczenia,
                                                 K.k_kod
                                                 FROM
                                                 ""public"".tg_zlecenia AS Z
-                                                INNER JOIN ""public"".tg_transakcje as TR ON Z.zl_idzlecenia = TR.zl_idzlecenia
-                                                INNER JOIN tb_klient K ON K.k_idklienta = TR.k_idklienta
-                                                WHERE
-                                                Z.zl_idzlecenia IN(SELECT ZZ.zl_idzlecenia FROM ""public"".tg_zlecenia ZZ WHERE ZZ.zl_nrzlecenia =" + WorkOrder.GetWorkOrderNumber() + " AND ZZ.zl_rok = '" + WorkOrder.GetWorkOrderYear().ToString() + "')" +
-                                                "AND TR.tr_rodzaj=30";
+                                                INNER JOIN tb_klient AS K ON K.k_idklienta = Z.k_idklienta
+                                                LEFT JOIN ""public"".tg_transakcje AS TR ON Z.zl_idzlecenia = TR.zl_idzlecenia
+                                                WHERE    Z.zl_idzlecenia IN(SELECT ZZ.zl_idzlecenia FROM ""public"".tg_zlecenia ZZ WHERE ZZ.zl_nrzlecenia =" + WorkOrder.GetWorkOrderNumber() + "AND ZZ.zl_rok ='" + WorkOrder.GetWorkOrderYear() + "' AND ZZ.zl_seria= '  SW') AND(TR.tr_rodzaj= 30 OR TR.tr_rodzaj= null)";
 
                         //cmd.Parameters["@numerZlecenia"].Value = int.Parse(numerZlecenia.Split(new char[] { '/' }).ElementAt(0));
                         //cmd.Parameters["@rok"].Value = numerZlecenia.Split(new char[] { '/' }).ElementAt(2);
@@ -149,7 +147,7 @@ namespace Fetcher
                                 {
                                     WorkOrder.Remark = Convert.IsDBNull(sdr.GetValue(0)) ? string.Empty : sdr.GetString(0);
                                     WorkOrder.ClientOrder = Convert.IsDBNull(sdr.GetValue(1)) ? string.Empty : sdr.GetString(1);
-                                    WorkOrder.WorkOrderDate = (DateTime)sdr.GetDate(2);
+                                    WorkOrder.WorkOrderDate = (DateTime)sdr.GetDateTime(2);
                                     WorkOrder.ClientName = Convert.IsDBNull(sdr.GetValue(3)) ? string.Empty : sdr.GetString(3);
                                 }
                             }
@@ -350,7 +348,7 @@ namespace Fetcher
 
         public string makeQueryAboutWoInVendo()
         {
-            return $"SELECT zl_idzlecenia FROM tg_zlecenia WHERE zl_nrzlecenia = '{WorkOrder.GetWorkOrderYear()}' AND  zl_rok='{WorkOrder.GetWorkOrderYear()}'";
+            return $"SELECT zl_idzlecenia FROM tg_zlecenia WHERE zl_nrzlecenia = '{WorkOrder.GetWorkOrderNumber()}' AND  zl_rok='{WorkOrder.GetWorkOrderYear()}'";
         }
 
         public string makeQueryAboutWoInSigma()
@@ -367,29 +365,30 @@ namespace Fetcher
         {
             try
             {
-                var a = Marshal.GetActiveObject("SigmaNEST.SNAutomation");
-                MessageBox.Show(a.ToString());
+                //var a = Marshal.GetActiveObject("SigmaNEST.SNAutomation");
+                Type comObjectType = Type.GetTypeFromProgID("SigmaNEST.SNAutomation", true);
+                Process[] process = Process.GetProcessesByName("SigmaNest");
+                object comObject = null;
+
+                if (process.Length == 0)
+                {
+                    MessageBox.Show("Nie znaleziono Sigmy.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw new Exception("Nie znaleziono Sigmy.");
+                }
+                comObject = Activator.CreateInstance(comObjectType);
+
+                if (comObject != null)
+                {
+                    MakeWolFile(MakePathToWol());
+                    Object[] parameters = new Object[2];
+                    parameters[0] = MakePathToWol();
+                    parameters[1] = true;
+
+                    comObject.GetType().InvokeMember("RunWOLFile", BindingFlags.InvokeMethod, null, comObject, parameters);
+                }
             }
             catch (Exception)
             {
-            }
-
-            Type comObjectType = Type.GetTypeFromProgID("SigmaNEST.SNAutomation", true);
-
-            Object comObject = Activator.CreateInstance(comObjectType);
-
-            if (comObject != null)
-            {
-                MakeWolFile(MakePathToWol());
-                Object[] parameters = new Object[2];
-                parameters[0] = MakePathToWol();
-                parameters[1] = true;
-
-                comObject.GetType().InvokeMember("RunWOLFile", BindingFlags.InvokeMethod, null, comObject, parameters);
-            }
-            else
-            {
-                MessageBox.Show("Nie znaleziono Sigmy.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

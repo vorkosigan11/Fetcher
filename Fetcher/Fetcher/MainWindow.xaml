@@ -25,6 +25,7 @@
             <RowDefinition Height="50" />
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
 
         <DockPanel  HorizontalAlignment="Center" Grid.Row="0">
@@ -46,10 +47,13 @@
             <Syncfusion:SfDataGrid.Columns>
                 <Syncfusion:GridTextColumn x:Name="NumerPozycji" MappingName="NumerPozycji" HeaderText="Lp." ColumnSizer="Auto" />
                 <Syncfusion:GridTextColumn MappingName="Path"  HeaderText="Sciezka" ColumnSizer="Star" />
+                <Syncfusion:GridTextColumn MappingName="Ilosc"  HeaderText="Sztuk" ColumnSizer="Star" />
                 <Syncfusion:GridCheckBoxColumn MappingName="Exist" HeaderText="Plik istnieje"  ColumnSizer="Auto" />
             </Syncfusion:SfDataGrid.Columns>
         </Syncfusion:SfDataGrid>
 
-        <TextBox x:Name="messageBox" Grid.Row="2" FontSize="50" Visibility="Hidden"></TextBox>
+        <TextBox x:Name="messageBox" Grid.Row="2" FontSize="50" Visibility="Hidden" HorizontalAlignment="Stretch"></TextBox>
+
+        <TextBox Grid.Row="3" HorizontalAlignment="Center" BorderThickness="0" VerticalAlignment="Center" >Software House Kulio - 2019 :)</TextBox>
     </Grid>
 </Window>

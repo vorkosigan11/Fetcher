@@ -51,6 +51,7 @@ namespace Fetcher
             else
             {
                 rokZlecenia.Text = "";
+                RunButton.IsEnabled = false;
             }
         }
 
@@ -62,11 +63,17 @@ namespace Fetcher
 
                 messageBox.Visibility = Visibility.Hidden;
                 dataGrid.Visibility = Visibility.Hidden;
-                BusyIndicator.IsBusy = true;
 
+                BusyIndicator.IsBusy = true;
                 BusyIndicator.Header = "Sprawdzanie czy istnieje zlecenie w Sigmie...";
+
                 bool sigma = await Task.Run(() => MyViewModel.isWoInSigma(Properties.Settings.Default.sigmaConnectionString));
+
+                BusyIndicator.IsBusy = true;
+                BusyIndicator.Header = "Sprawdzanie czy istnieje zlecenie w Vendo...";
+
                 bool vendo = await Task.Run(() => MyViewModel.isWoInVendo(Properties.Settings.Default.vendoConnectionString));
+
                 if ((!sigma && vendo) == true)
                 {
                     BusyIndicator.Header = "Pobieranie danych z bazy Vendo...";
@@ -95,8 +102,6 @@ namespace Fetcher
                         BusyIndicator.Header = "Ładowanie WOL do Sigmy...";
                         BusyIndicator.IsBusy = true;
 
-                        await Task.Run(() => Task.Delay(2000));
-
                         await Task.Run(() =>
                         {
                             MyViewModel.RunSigma();
@@ -105,7 +110,7 @@ namespace Fetcher
                         BusyIndicator.IsBusy = false;
                         BusyIndicator.Header = "Aktualizacja zlecenia w Sigmie...";
                         BusyIndicator.IsBusy = true;
-                        await Task.Run(() => Task.Delay(2000));
+
                         if (MyViewModel.isWoInSigma(Fetcher.Properties.Settings.Default.sigmaConnectionString))
                         {
                             int i = MyViewModel.ChangeInSigma(Fetcher.Properties.Settings.Default.sigmaConnectionString, MyViewModel.makeQueryUpdateWoInSigma());
@@ -114,9 +119,9 @@ namespace Fetcher
                         {
                             MessageBox.Show("Posypało się - brak zlecenia w Sigmie", "ERROR", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-
-                        BusyIndicator.IsBusy = false;
                     }
+                    BusyIndicator.IsBusy = false;
+                    numerZlecenia.Text = string.Empty;
                 }
                 else
                 {
